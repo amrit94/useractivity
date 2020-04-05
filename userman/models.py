@@ -16,11 +16,17 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+    @property
+    def real_name(self):
+        return self.user.first_name + ' ' + self.user.last_name
+
 
 class ActivityPeriod(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    profile = models.ForeignKey(Profile, on_delete=models.PROTECT, related_name='activity_periods')
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+
+
 
 # @receiver(post_save, sender=User)
 # def create_user_profile(sender, instance, created, **kwargs):

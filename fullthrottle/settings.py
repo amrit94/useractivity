@@ -16,8 +16,8 @@ import os
 import dj_database_url
 import psycopg2
 
+debug = int(os.getenv('DEBUG'))
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -26,14 +26,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'hn^9j&@5ff!!nxo!wg3z_*kf=ok6&_s-a4yv^66@p%@w=s1-rm'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if debug:
+    DEBUG = True
+else:
+    DEBUG = False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'userman.apps.UsermanConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -73,20 +76,40 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fullthrottle.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DEFAULT_DATABASE_CONFIG = dj_database_url.config(env='DATABASE_URL', conn_max_age=120)
-DEFAULT_DATABASE_CONFIG.update({
-    'OPTIONS': {
-        'isolation_level': psycopg2.extensions.ISOLATION_LEVEL_REPEATABLE_READ,
+if debug:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'webdb',
+            'USER': 'dbuser',
+            'PASSWORD': 'dbuser',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
     }
-})
-DATABASES = {
-    'default': DEFAULT_DATABASE_CONFIG,
-}
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'd6u2q2t6jrdo5a',
+            'USER': 'gvplrtrvyftowv',
+            'PASSWORD': '51d44fd8e1619310c5aa43537bf6a07917df7f29c8a6cb5decf330d08702360f',
+            'HOST': 'ec2-52-71-85-210.compute-1.amazonaws.com',
+            'PORT': '5432',
+        }
+    }
+# DEFAULT_DATABASE_CONFIG = dj_database_url.config(env='DATABASE_URL', conn_max_age=120)
+# DEFAULT_DATABASE_CONFIG.update({
+#     'OPTIONS': {
+#         'isolation_level': psycopg2.extensions.ISOLATION_LEVEL_REPEATABLE_READ,
+#     }
+# })
+# DATABASES = {
+#     'default': DEFAULT_DATABASE_CONFIG,
+# }
 
 
 # Password validation
@@ -107,7 +130,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -120,7 +142,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
